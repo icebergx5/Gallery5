@@ -41,11 +41,9 @@ import com.bluetech.gallery5.R;
 import com.bluetech.gallery5.logger.Log;
 import com.bluetech.gallery5.util.ImageCache;
 import com.bluetech.gallery5.util.ImageFetcher;
-import com.bluetech.gallery5.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -78,7 +76,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
 
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
@@ -108,9 +106,9 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                 // Pause fetcher to ensure smoother scrolling when flinging
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
                     // Before Honeycomb pause image loading on scroll to help with performance
-                    if (!Utils.hasHoneycomb()) {
-                        mImageFetcher.setPauseWork(true);
-                    }
+
+                     //   mImageFetcher.setPauseWork(true);
+
                 } else {
                     mImageFetcher.setPauseWork(false);
                 }
@@ -142,13 +140,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                                 if (BuildConfig.DEBUG) {
                                     Log.d(TAG, "onCreateView - numColumns set to " + numColumns);
                                 }
-                                if (Utils.hasJellyBean()) {
-                                    mGridView.getViewTreeObserver()
-                                            .removeOnGlobalLayoutListener(this);
-                                } else {
-                                    mGridView.getViewTreeObserver()
-                                            .removeGlobalOnLayoutListener(this);
-                                }
+                                mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             }
                         }
                     }
@@ -184,17 +176,13 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         final Intent i = new Intent(getActivity(), ImageDetailActivity.class);
         i.putExtra(ImageDetailActivity.EXTRA_IMAGE, (int) id);
         i.putExtra("PATH", this.path);
-        if (Utils.hasJellyBean()) {
-            // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
-            // show plus the thumbnail image in GridView is cropped. so using
-            // makeScaleUpAnimation() instead.
-            ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
-            getActivity().startActivity(i, options.toBundle());
-        } else {
-            startActivity(i);
-        }
-    }
 
+        // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
+        // show plus the thumbnail image in GridView is cropped. so using
+        // makeScaleUpAnimation() instead.
+        ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+        getActivity().startActivity(i, options.toBundle());
+    }
 
     /**
      * The main adapter that backs the GridView. This is fairly standard except the number of
@@ -214,14 +202,11 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         public ImageAdapter(Context context, String path) {
             super();
             mContext = context;
-            mImageViewLayoutParams = new GridView.LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             // Calculate ActionBar height
             TypedValue tv = new TypedValue();
-            if (context.getTheme().resolveAttribute(
-                    android.R.attr.actionBarSize, tv, true)) {
-                mActionBarHeight = TypedValue.complexToDimensionPixelSize(
-                        tv.data, context.getResources().getDisplayMetrics());
+            if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                mActionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
             }
 
             File mainFile = new File(path);
@@ -285,8 +270,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                     convertView = new View(mContext);
                 }
                 // Set empty view with height of ActionBar
-                convertView.setLayoutParams(new AbsListView.LayoutParams(
-                        LayoutParams.MATCH_PARENT, mActionBarHeight));
+                convertView.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, mActionBarHeight));
                 return convertView;
             }
 

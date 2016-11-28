@@ -18,13 +18,7 @@ package com.bluetech.gallery5.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
-import android.widget.Toast;
-
 import com.bluetech.gallery5.BuildConfig;
-import com.bluetech.gallery5.R;
 import com.bluetech.gallery5.logger.Log;
 
 import java.io.BufferedInputStream;
@@ -34,9 +28,6 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
  */
@@ -195,9 +186,6 @@ public class ImageFetcher extends ImageResizer {
                         }
                         DiskLruCache.Editor editor = mHttpDiskCache.edit(key);
                         if (editor != null) {
-
-
-
                             if (downloadUrlToStream(data,editor.newOutputStream(DISK_CACHE_INDEX))) {
                                 editor.commit();
                             } else {
@@ -207,8 +195,7 @@ public class ImageFetcher extends ImageResizer {
                         snapshot = mHttpDiskCache.get(key);
                     }
                     if (snapshot != null) {
-                        fileInputStream =
-                                (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
+                        fileInputStream = (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
                         fileDescriptor = fileInputStream.getFD();
                     }
                 } catch (IOException e) {
@@ -227,8 +214,7 @@ public class ImageFetcher extends ImageResizer {
 
         Bitmap bitmap = null;
         if (fileDescriptor != null) {
-            bitmap = decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth,
-                    mImageHeight, getImageCache());
+            bitmap = decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth, mImageHeight, getImageCache());
         }
         if (fileInputStream != null) {
             try {
@@ -250,8 +236,6 @@ public class ImageFetcher extends ImageResizer {
      * @return true if successful, false otherwise
      */
     public boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
-        disableConnectionReuseIfNecessary();
-        HttpURLConnection urlConnection = null;
         BufferedOutputStream out = null;
         BufferedInputStream in = null;
 
@@ -290,14 +274,5 @@ public class ImageFetcher extends ImageResizer {
         return false;
     }
 
-    /**
-     * Workaround for bug pre-Froyo, see here for more info:
-     * http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-     */
-    public static void disableConnectionReuseIfNecessary() {
-        // HTTP connection reuse which was buggy pre-froyo
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-            System.setProperty("http.keepAlive", "false");
-        }
-    }
+
 }

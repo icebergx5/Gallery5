@@ -125,10 +125,7 @@ public class ImageResizer extends ImageWorker {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         // END_INCLUDE (read_bitmap_dimensions)
 
-        // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+        addInBitmapOptions(options, cache);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
@@ -156,10 +153,7 @@ public class ImageResizer extends ImageWorker {
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-        // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+        addInBitmapOptions(options, cache);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
@@ -176,8 +170,7 @@ public class ImageResizer extends ImageWorker {
      * @return A bitmap sampled down from the original with the same aspect ratio and dimensions
      *         that are equal to or greater than the requested width and height
      */
-    public static Bitmap decodeSampledBitmapFromDescriptor(
-            FileDescriptor fileDescriptor, int reqWidth, int reqHeight, ImageCache cache) {
+    public static Bitmap decodeSampledBitmapFromDescriptor( FileDescriptor fileDescriptor, int reqWidth, int reqHeight, ImageCache cache) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -190,10 +183,7 @@ public class ImageResizer extends ImageWorker {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
 
-        // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+        addInBitmapOptions(options, cache);
 
         return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
     }

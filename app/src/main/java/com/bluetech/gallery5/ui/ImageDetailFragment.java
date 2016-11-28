@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import com.bluetech.gallery5.R;
 import com.bluetech.gallery5.util.ImageFetcher;
 import com.bluetech.gallery5.util.ImageWorker;
-import com.bluetech.gallery5.util.Utils;
 
 /**
  * This fragment will populate the children of the ViewPager from {@link ImageDetailActivity}.
@@ -92,7 +91,7 @@ public class ImageDetailFragment extends Fragment {
         }
 
         // Pass clicks on the ImageView to the parent activity to handle
-        if (OnClickListener.class.isInstance(getActivity()) && Utils.hasHoneycomb()) {
+        if (OnClickListener.class.isInstance(getActivity())) {
             mImageView.setOnClickListener((OnClickListener) getActivity());
         }
     }

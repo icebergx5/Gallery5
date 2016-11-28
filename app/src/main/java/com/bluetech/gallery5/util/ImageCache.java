@@ -143,10 +143,8 @@ public class ImageCache {
             // require knowledge of the expected size of the bitmaps. From Honeycomb to JellyBean
             // the size would need to be precise, from KitKat onward the size would just need to
             // be the upper bound (due to changes in how inBitmap can re-use bitmaps).
-            if (Utils.hasHoneycomb()) {
-                mReusableBitmaps =
-                        Collections.synchronizedSet(new HashSet<SoftReference<Bitmap>>());
-            }
+
+            mReusableBitmaps = Collections.synchronizedSet(new HashSet<SoftReference<Bitmap>>());
 
             mMemoryCache = new LruCache<String, BitmapDrawable>(mCacheParams.memCacheSize) {
 
@@ -163,11 +161,11 @@ public class ImageCache {
                     } else {
                         // The removed entry is a standard BitmapDrawable
 
-                        if (Utils.hasHoneycomb()) {
-                            // We're running on Honeycomb or later, so add the bitmap
-                            // to a SoftReference set for possible use with inBitmap later
-                            mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
-                        }
+
+                    // We're running on Honeycomb or later, so add the bitmap
+                    // to a SoftReference set for possible use with inBitmap later
+                    mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
+
                     }
                 }
 
@@ -515,16 +513,7 @@ public class ImageCache {
      * @return true if <code>candidate</code> can be used for inBitmap re-use with
      *      <code>targetOptions</code>
      */
-    @TargetApi(VERSION_CODES.JELLY_BEAN)
-    private static boolean canUseForInBitmap(
-            Bitmap candidate, BitmapFactory.Options targetOptions) {
-        //BEGIN_INCLUDE(can_use_for_inbitmap)
-        if (!Utils.hasKitKat()) {
-            // On earlier versions, the dimensions must match exactly and the inSampleSize must be 1
-            return candidate.getWidth() == targetOptions.outWidth
-                    && candidate.getHeight() == targetOptions.outHeight
-                    && targetOptions.inSampleSize == 1;
-        }
+    private static boolean canUseForInBitmap(Bitmap candidate, BitmapFactory.Options targetOptions) {
 
         // From Android 4.4 (KitKat) onward we can re-use if the byte size of the new bitmap
         // is smaller than the reusable bitmap candidate allocation byte count.
@@ -629,51 +618,7 @@ public class ImageCache {
     public static int getBitmapSize(BitmapDrawable value) {
         Bitmap bitmap = value.getBitmap();
 
-        // From KitKat onward use getAllocationByteCount() as allocated bytes can potentially be
-        // larger than bitmap byte count.
-        if (Utils.hasKitKat()) {
-            return bitmap.getByteCount();
-        }
-
-        if (Utils.hasHoneycombMR1()) {
-            return bitmap.getByteCount();
-        }
-
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
-    }
-
-    /**
-     * Check if external storage is built-in or removable.
-     *
-     * @return True if external storage is removable (like an SD card), false
-     *         otherwise.
-     */
-    @TargetApi(VERSION_CODES.GINGERBREAD)
-    public static boolean isExternalStorageRemovable() {
-        if (Utils.hasGingerbread()) {
-            return Environment.isExternalStorageRemovable();
-        }
-        return true;
-    }
-
-    /**
-     * Get the external app cache directory.
-     *
-     * @param context The context to use
-     * @return The external cache dir
-     */
-    @TargetApi(VERSION_CODES.FROYO)
-    public static File getExternalCacheDir(Context context) {
-
-       /*
-        if (Utils.hasFroyo()) {
-            return context.getExternalCacheDir();
-        }
-*/
-        // Before Froyo we need to construct the external cache dir ourselves
-        final String cacheDir = "/Android/data/" + context.getPackageName() + "/cache/";
-        return new File(Environment.getExternalStorageDirectory().getPath() + cacheDir);
+        return bitmap.getByteCount();
     }
 
     /**
@@ -682,13 +627,8 @@ public class ImageCache {
      * @param path The path to check
      * @return The space available in bytes
      */
-    @TargetApi(VERSION_CODES.GINGERBREAD)
     public static long getUsableSpace(File path) {
-        if (Utils.hasGingerbread()) {
-            return path.getUsableSpace();
-        }
-        final StatFs stats = new StatFs(path.getPath());
-        return (long) stats.getBlockSize() * (long) stats.getAvailableBlocks();
+        return path.getUsableSpace();
     }
 
     /**
