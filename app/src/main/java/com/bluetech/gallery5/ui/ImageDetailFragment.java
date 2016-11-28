@@ -38,6 +38,9 @@ public class ImageDetailFragment extends Fragment {
     private ImageView mImageView;
     private ImageFetcher mImageFetcher;
 
+
+    private String path;
+
     /**
      * Factory method to generate a new instance of the fragment given an image number.
      *

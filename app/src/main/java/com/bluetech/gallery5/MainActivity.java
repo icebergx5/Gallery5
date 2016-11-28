@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -76,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -86,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String idStr = id+"";
 
         Fragment fragment = new ImageGridFragment();
+        ((ImageGridFragment)fragment).setPath( getMupaDirectory().toString() + File.separator + "KATALOG"+idStr);
+
         // if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
         //replacing the fragment
         if (fragment != null) {

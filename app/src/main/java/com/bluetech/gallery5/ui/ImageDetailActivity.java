@@ -32,10 +32,13 @@ import android.view.WindowManager.LayoutParams;
 
 import com.bluetech.gallery5.BuildConfig;
 import com.bluetech.gallery5.R;
-import com.bluetech.gallery5.provider.Images;
 import com.bluetech.gallery5.util.ImageCache;
 import com.bluetech.gallery5.util.ImageFetcher;
 import com.bluetech.gallery5.util.Utils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ImageDetailActivity extends FragmentActivity implements OnClickListener {
@@ -45,6 +48,8 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
     private ImagePagerAdapter mAdapter;
     private ImageFetcher mImageFetcher;
     private ViewPager mPager;
+
+    private String[] imageUrls;
 
     @TargetApi(VERSION_CODES.HONEYCOMB)
     @Override
@@ -69,8 +74,7 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         // cache.
         final int longest = (height > width ? height : width) / 2;
 
-        ImageCache.ImageCacheParams cacheParams =
-                new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
         cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
@@ -78,8 +82,23 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
         mImageFetcher.setImageFadeIn(false);
 
+        String path = getIntent().getStringExtra("PATH");
+
+        File mainFile = new File(path);
+        if(mainFile.exists() && mainFile.isDirectory()){
+            File[] files = mainFile.listFiles();
+            List<String> lists = new ArrayList<String>();
+
+            for (int i = 0; i < files.length; i++){
+                if(files[i].isFile()){
+                    lists.add(files[i].getAbsolutePath());
+                }
+            }
+            imageUrls = lists.toArray(new String[0]);
+        }
+
         // Set up ViewPager and backing adapter
-        mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), Images.imageUrls.length);
+        mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), imageUrls.length);
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
         mPager.setPageMargin((int) getResources().getDimension(R.dimen.horizontal_page_margin));
@@ -169,7 +188,7 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
 
         @Override
         public Fragment getItem(int position) {
-            return ImageDetailFragment.newInstance(Images.imageUrls[position]);
+            return ImageDetailFragment.newInstance(imageUrls[position]);
         }
     }
 

@@ -102,8 +102,7 @@ public class ImageCache {
      * @param cacheParams The cache parameters to use if the ImageCache needs instantiation.
      * @return An existing retained ImageCache object or a new one if one did not exist
      */
-    public static ImageCache getInstance(
-            FragmentManager fragmentManager, ImageCacheParams cacheParams) {
+    public static ImageCache getInstance(FragmentManager fragmentManager, ImageCacheParams cacheParams) {
 
         // Search for, or create an instance of the non-UI RetainFragment
         final RetainFragment mRetainFragment = findOrCreateRetainFragment(fragmentManager);
@@ -554,6 +553,19 @@ public class ImageCache {
         return 1;
     }
 
+    public static String getMupaDirectory(){
+
+        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String mupa = "MUPA";
+        File directory = new File(root + File.separator + mupa);
+
+        if(!directory.exists()){
+            directory.mkdir();
+        }
+
+        return directory.toString();
+    }
+
     /**
      * Get a usable cache directory (external if available, internal otherwise).
      *
@@ -564,10 +576,14 @@ public class ImageCache {
     public static File getDiskCacheDir(Context context, String uniqueName) {
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise use internal cache dir
+        /*
         final String cachePath =
                 Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
                         !isExternalStorageRemovable() ? getExternalCacheDir(context).getPath() :
                                 context.getCacheDir().getPath();
+        */
+
+        final String cachePath = getMupaDirectory();
 
         return new File(cachePath + File.separator + uniqueName);
     }

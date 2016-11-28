@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +39,14 @@ import android.widget.ImageView;
 import com.bluetech.gallery5.BuildConfig;
 import com.bluetech.gallery5.R;
 import com.bluetech.gallery5.logger.Log;
-import com.bluetech.gallery5.provider.Images;
 import com.bluetech.gallery5.util.ImageCache;
 import com.bluetech.gallery5.util.ImageFetcher;
 import com.bluetech.gallery5.util.Utils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
@@ -59,6 +64,12 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     private ImageAdapter mAdapter;
     private ImageFetcher mImageFetcher;
 
+    private String path;
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     /**
      * Empty constructor as per the Fragment documentation
      */
@@ -72,10 +83,9 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
-        mAdapter = new ImageAdapter(getActivity());
+        mAdapter = new ImageAdapter(getActivity(), this.path);
 
-        ImageCache.ImageCacheParams cacheParams =
-                new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
         cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
@@ -86,8 +96,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View v = inflater.inflate(R.layout.image_grid_fragment, container, false);
         final GridView mGridView = (GridView) v.findViewById(R.id.gridView);
@@ -174,12 +183,12 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         final Intent i = new Intent(getActivity(), ImageDetailActivity.class);
         i.putExtra(ImageDetailActivity.EXTRA_IMAGE, (int) id);
+        i.putExtra("PATH", this.path);
         if (Utils.hasJellyBean()) {
             // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
             // show plus the thumbnail image in GridView is cropped. so using
             // makeScaleUpAnimation() instead.
-            ActivityOptions options =
-                    ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+            ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
             getActivity().startActivity(i, options.toBundle());
         } else {
             startActivity(i);
@@ -200,7 +209,9 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         private int mActionBarHeight = 0;
         private GridView.LayoutParams mImageViewLayoutParams;
 
-        public ImageAdapter(Context context) {
+        private String[] imageThumbUrls;
+
+        public ImageAdapter(Context context, String path) {
             super();
             mContext = context;
             mImageViewLayoutParams = new GridView.LayoutParams(
@@ -212,6 +223,19 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                 mActionBarHeight = TypedValue.complexToDimensionPixelSize(
                         tv.data, context.getResources().getDisplayMetrics());
             }
+
+            File mainFile = new File(path);
+            if(mainFile.exists() && mainFile.isDirectory()){
+                File[] files = mainFile.listFiles();
+                List<String> lists = new ArrayList<String>();
+
+                for (int i = 0; i < files.length; i++){
+                    if(files[i].isFile()){
+                        lists.add(files[i].getAbsolutePath());
+                    }
+                }
+                imageThumbUrls = lists.toArray(new String[0]);
+            }
         }
 
         @Override
@@ -222,13 +246,13 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             }
 
             // Size + number of columns for top empty row
-            return Images.imageThumbUrls.length + mNumColumns;
+            return imageThumbUrls.length + mNumColumns;
         }
 
         @Override
         public Object getItem(int position) {
             return position < mNumColumns ?
-                    null : Images.imageThumbUrls[position - mNumColumns];
+                    null : imageThumbUrls[position - mNumColumns];
         }
 
         @Override
@@ -283,7 +307,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
             // Finally load the image asynchronously into the ImageView, this also takes care of
             // setting a placeholder image while the background thread runs
-            mImageFetcher.loadImage(Images.imageThumbUrls[position - mNumColumns], imageView);
+            mImageFetcher.loadImage(imageThumbUrls[position - mNumColumns], imageView);
             return imageView;
             //END_INCLUDE(load_gridview_item)
         }

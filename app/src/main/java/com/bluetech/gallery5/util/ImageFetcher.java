@@ -76,7 +76,6 @@ public class ImageFetcher extends ImageResizer {
     }
 
     private void init(Context context) {
-        checkConnection(context);
         mHttpCacheDir = ImageCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
     }
 
@@ -164,20 +163,6 @@ public class ImageFetcher extends ImageResizer {
     }
 
     /**
-    * Simple network connection check.
-    *
-    * @param context
-    */
-    private void checkConnection(Context context) {
-        final ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnectedOrConnecting()) {
-            Log.e(TAG, "checkConnection - no connection found");
-        }
-    }
-
-    /**
      * The main process method, which will be called by the ImageWorker in the AsyncTask background
      * thread.
      *
@@ -210,8 +195,10 @@ public class ImageFetcher extends ImageResizer {
                         }
                         DiskLruCache.Editor editor = mHttpDiskCache.edit(key);
                         if (editor != null) {
-                            if (downloadUrlToStream(data,
-                                    editor.newOutputStream(DISK_CACHE_INDEX))) {
+
+
+
+                            if (downloadUrlToStream(data,editor.newOutputStream(DISK_CACHE_INDEX))) {
                                 editor.commit();
                             } else {
                                 editor.abort();
@@ -269,9 +256,13 @@ public class ImageFetcher extends ImageResizer {
         BufferedInputStream in = null;
 
         try {
+            /*
             final URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
-            in = new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE);
+            */
+            in = new BufferedInputStream(new FileInputStream(new File(urlString)),IO_BUFFER_SIZE);
+
+           // in = new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE);
             out = new BufferedOutputStream(outputStream, IO_BUFFER_SIZE);
 
             int b;
@@ -282,9 +273,11 @@ public class ImageFetcher extends ImageResizer {
         } catch (final IOException e) {
             Log.e(TAG, "Error in downloadBitmap - " + e);
         } finally {
+            /*
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
+            */
             try {
                 if (out != null) {
                     out.close();

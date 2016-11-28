@@ -16,13 +16,12 @@
 
 package com.bluetech.gallery5.util;
 
-import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.StrictMode;
 
+import com.bluetech.gallery5.MainActivity;
 import com.bluetech.gallery5.ui.ImageDetailActivity;
-import com.bluetech.gallery5.ui.ImageGridActivity;
 
 /**
  * Class containing some static utility methods.
@@ -31,9 +30,9 @@ public class Utils {
     private Utils() {};
 
 
-    @TargetApi(VERSION_CODES.HONEYCOMB)
+
     public static void enableStrictMode() {
-        if (Utils.hasGingerbread()) {
+
             StrictMode.ThreadPolicy.Builder threadPolicyBuilder =
                     new StrictMode.ThreadPolicy.Builder()
                             .detectAll()
@@ -43,15 +42,14 @@ public class Utils {
                             .detectAll()
                             .penaltyLog();
 
-            if (Utils.hasHoneycomb()) {
-                threadPolicyBuilder.penaltyFlashScreen();
-                vmPolicyBuilder
-                        .setClassInstanceLimit(ImageGridActivity.class, 1)
-                        .setClassInstanceLimit(ImageDetailActivity.class, 1);
-            }
+            threadPolicyBuilder.penaltyFlashScreen();
+            vmPolicyBuilder
+                    .setClassInstanceLimit(MainActivity.class, 1)
+                    .setClassInstanceLimit(ImageDetailActivity.class, 1);
+
             StrictMode.setThreadPolicy(threadPolicyBuilder.build());
             StrictMode.setVmPolicy(vmPolicyBuilder.build());
-        }
+
     }
 
     public static boolean hasFroyo() {
