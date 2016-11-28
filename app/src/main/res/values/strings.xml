@@ -4,4 +4,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+
+
+    <string name="clear_cache_menu">Cache sil</string>
+    <string name="clear_cache_complete_toast">Caches silindi</string>
+
 </resources>

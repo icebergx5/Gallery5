@@ -26,6 +26,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -35,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bluetech.gallery5.BuildConfig;
 import com.bluetech.gallery5.R;
@@ -150,6 +153,13 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         return v;
     }
 
+
+    public void clearCache(){
+        mImageFetcher.clearCache();
+        Toast.makeText(getActivity(), R.string.clear_cache_complete_toast, Toast.LENGTH_SHORT).show();
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -171,7 +181,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         mImageFetcher.closeCache();
     }
 
-    @TargetApi(VERSION_CODES.JELLY_BEAN)
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         final Intent i = new Intent(getActivity(), ImageDetailActivity.class);

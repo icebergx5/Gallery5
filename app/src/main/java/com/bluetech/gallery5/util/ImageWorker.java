@@ -124,8 +124,7 @@ public abstract class ImageWorker {
      * @param fragmentManager
      * @param cacheParams The cache parameters to use for the image cache.
      */
-    public void addImageCache(FragmentManager fragmentManager,
-            ImageCache.ImageCacheParams cacheParams) {
+    public void addImageCache(FragmentManager fragmentManager, ImageCache.ImageCacheParams cacheParams) {
         mImageCacheParams = cacheParams;
         mImageCache = ImageCache.getInstance(fragmentManager, mImageCacheParams);
         new CacheAsyncTask().execute(MESSAGE_INIT_DISK_CACHE);
