@@ -36,6 +36,7 @@ import com.bluetech.gallery5.util.ImageCache;
 import com.bluetech.gallery5.util.ImageFetcher;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -83,6 +84,8 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         File mainFile = new File(path);
         if(mainFile.exists() && mainFile.isDirectory()){
             File[] files = mainFile.listFiles();
+            Arrays.sort(files);
+
             List<String> lists = new ArrayList<String>();
 
             for (int i = 0; i < files.length; i++){

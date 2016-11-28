@@ -44,6 +44,7 @@ import com.bluetech.gallery5.util.ImageFetcher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -203,16 +204,19 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             super();
             mContext = context;
             mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+/*
             // Calculate ActionBar height
             TypedValue tv = new TypedValue();
             if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 mActionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
             }
-
+*/
             File mainFile = new File(path);
             if(mainFile.exists() && mainFile.isDirectory()){
                 File[] files = mainFile.listFiles();
+                Arrays.sort(files);
                 List<String> lists = new ArrayList<String>();
+                Arrays.sort(files);
 
                 for (int i = 0; i < files.length; i++){
                     if(files[i].isFile()){
@@ -236,8 +240,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
         @Override
         public Object getItem(int position) {
-            return position < mNumColumns ?
-                    null : imageThumbUrls[position - mNumColumns];
+            return position < mNumColumns ? null : imageThumbUrls[position - mNumColumns];
         }
 
         @Override

@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.bluetech.gallery5.ui.ImageGridFragment;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,14 +50,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         File directory = getMupaDirectory();
         File[] files = directory.listFiles();
+        Arrays.sort(files);
 
-        for (int i = 0; i < files.length; i++)
-        {
+        for (int i = 0; i < files.length; i++) {
             if(files[i].isDirectory()){
-                menu.add(0, i, 0, files[i].getName());
+                String fileName = files[i].getName();
+                if(!fileName.equals("thumbs") && !fileName.equals("http") && !fileName.equals("images") ) {
+                    menu.add(0, i, 0, fileName);
+                }
             }
         }
-
         navigationView.setNavigationItemSelectedListener(this);
     }
 
