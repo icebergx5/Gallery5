@@ -16,18 +16,12 @@
 
 package com.bluetech.gallery5.ui;
 
-import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -58,7 +52,7 @@ import java.util.List;
  * quickly if, for example, the user rotates the device.
  */
 public class ImageGridFragment extends Fragment implements AdapterView.OnItemClickListener {
-    private static final String TAG = "ImageGridFragment";
+
     private static final String IMAGE_CACHE_DIR = "thumbs";
 
     private int mImageThumbSize;
@@ -130,7 +124,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         // of each view so we get nice square thumbnails.
         mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @TargetApi(VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
                         if (mAdapter.getNumColumns() == 0) {
@@ -141,9 +134,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                                         (mGridView.getWidth() / numColumns) - mImageThumbSpacing;
                                 mAdapter.setNumColumns(numColumns);
                                 mAdapter.setItemHeight(columnWidth);
-                                if (BuildConfig.DEBUG) {
-                                    Log.d(TAG, "onCreateView - numColumns set to " + numColumns);
-                                }
                                 mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             }
                         }
@@ -291,6 +281,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             if (convertView == null) { // if it's not recycled, instantiate and initialize
                 imageView = new RecyclingImageView(mContext);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                //imageView.setScaleType(ImageView.ScaleType.MATRIX);
                 imageView.setLayoutParams(mImageViewLayoutParams);
             } else { // Otherwise re-use the converted view
                 imageView = (ImageView) convertView;

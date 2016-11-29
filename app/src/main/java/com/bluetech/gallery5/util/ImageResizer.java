@@ -16,12 +16,10 @@
 
 package com.bluetech.gallery5.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 
 import com.bluetech.gallery5.BuildConfig;
 import com.bluetech.gallery5.logger.Log;
@@ -188,7 +186,6 @@ public class ImageResizer extends ImageWorker {
         return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static void addInBitmapOptions(BitmapFactory.Options options, ImageCache cache) {
         //BEGIN_INCLUDE(add_bitmap_options)
         // inBitmap only works with mutable bitmaps so force the decoder to

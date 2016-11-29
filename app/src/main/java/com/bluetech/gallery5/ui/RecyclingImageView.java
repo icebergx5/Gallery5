@@ -57,6 +57,7 @@ public class RecyclingImageView extends ImageView {
         // Keep hold of previous Drawable
         final Drawable previousDrawable = getDrawable();
 
+
         // Call super to set new Drawable
         super.setImageDrawable(drawable);
 
